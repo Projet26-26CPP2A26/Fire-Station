@@ -1,7 +1,4 @@
 #include "personnel.h"
-// Implémentation de l'entité Personnel.
-// La méthode charge() calcule la charge opérationnelle utilisée par le métier « détection de surcharge ».
-
 
 Personnel::Personnel()
 {

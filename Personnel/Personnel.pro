@@ -1,31 +1,34 @@
 QT       += core gui widgets
 
+DEFINES += STANDALONE_PERSONNEL
+
 TARGET = Personnel
 TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    gpersonnel.cpp \
+    gsmartfirestation.cpp \
+    gsmartfirestation_personnel.cpp \
+    gsmartfirestation_vehicules.cpp \
     personnel.cpp \
     vehicule.cpp \
     personneldialog.cpp \
     vehiculedialog.cpp \
     statsdialog.cpp \
-    pdfexport.cpp
+    pdfexport.cpp \
+    piechartwidget.cpp
 
 HEADERS += \
-    gpersonnel.h \
+    gsmartfirestation.h \
     personnel.h \
     vehicule.h \
     personneldialog.h \
     vehiculedialog.h \
     statsdialog.h \
     pdfexport.h \
-    styleutils.h
+    styleutils.h \
+    piechartwidget.h
 
-# Un seul fichier .ui
-FORMS += \
-    gpersonnel.ui
+FORMS += gsmartfirestation.ui
 
-RESOURCES += \
-    resources.qrc
+RESOURCES += resources.qrc

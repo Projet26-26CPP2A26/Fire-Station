@@ -22,7 +22,7 @@ struct StatCritere
 StatCritere compterParValeur(const QString &nom, const QStringList &possibles,
                              const QStringList &reelles);
 
-// Fenêtre de statistiques graphiques (une barre par valeur)
+// Fenêtre de statistiques graphiques avec diagramme circulaire (donut) et pourcentages
 class StatsDialog : public QDialog
 {
     Q_OBJECT

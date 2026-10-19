@@ -2,9 +2,6 @@
 #define PERSONNEL_H
 
 #include <QString>
-// Entité Personnel : regroupe les informations d'un membre de la station.
-// Les méthodes de cette classe servent au CRUD, au tri et aux indicateurs de disponibilité.
-
 #include <QStringList>
 
 // Entité "Personnel" (Module 1 : Gestion du personnel)
