@@ -93,10 +93,12 @@ private:
 
     // ----- Module Personnel -----
     void setupPersonnel();
+    void chargerPersonnelExemple();
     void refreshPersonnelTable();
     void refreshSurcharge();
     void filtrerPersonnel();
     int personnelSelectionne();
+    QString prochainIdPersonnel();
     bool doitEchangerPersonnel(Personnel a, Personnel b, int critere);
     StatCritere statPersonnelParGrade();
     StatCritere statPersonnelParDispo();

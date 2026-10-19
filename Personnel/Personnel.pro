@@ -1,4 +1,4 @@
-QT       += core gui widgets sql
+QT       += core gui widgets
 
 DEFINES += STANDALONE_PERSONNEL
 
@@ -12,7 +12,7 @@ SOURCES += \
     gsmartfirestation_vehicules.cpp \
     personnel.cpp \
     vehicule.cpp \
-    connection.cpp \
+    personneldialog.cpp \
     vehiculedialog.cpp \
     statsdialog.cpp \
     pdfexport.cpp \
@@ -22,7 +22,7 @@ HEADERS += \
     gsmartfirestation.h \
     personnel.h \
     vehicule.h \
-    connection.h \
+    personneldialog.h \
     vehiculedialog.h \
     statsdialog.h \
     pdfexport.h \
