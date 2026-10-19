@@ -39,7 +39,7 @@ void GSmartFireStation::setupPersonnel()
     m_formPersonnel = new QGroupBox("Fiche du personnel — remplissez les champs puis validez");
     m_formPersonnel->setObjectName("formPersonnelInline");
     m_formPersonnel->setStyleSheet("QGroupBox { border: 1px solid #D7DEE8; border-radius: 8px; margin-top: 10px; padding: 10px; font-weight: 600; } QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px; color: #1F4E79; }");
-    m_formId = new QLabel(prochainIdPersonnel());
+    m_formId = new QLabel(QString("(auto)"));
     m_formNom = new QLineEdit; m_formNom->setPlaceholderText("Nom");
     m_formPrenom = new QLineEdit; m_formPrenom->setPlaceholderText("Prénom");
     m_formGrade = new QComboBox; m_formGrade->addItems(Personnel::grades());
@@ -59,8 +59,9 @@ void GSmartFireStation::setupPersonnel()
     };
     addField(0,0,"ID",m_formId); addField(0,1,"Nom",m_formNom); addField(0,2,"Prénom",m_formPrenom);
     addField(0,3,"Grade",m_formGrade); addField(0,4,"Poste",m_formPoste);
-    addField(1,0,"Téléphone",m_formTelephone); addField(1,1,"Email",m_formEmail); addField(1,2,"Mot de passe",m_formMotDePasse);
-    addField(1,3,"Disponibilité",m_formDisponibilite); addField(1,4,"Missions",m_formMissions);
+    addField(1,0,"Téléphone",m_formTelephone); addField(1,1,"Email",m_formEmail);
+    addField(1,2,"Disponibilité",m_formDisponibilite);
+    // Mot de passe et Missions ne font pas partie du modèle validé : champs non affichés.
     for (int c=0;c<5;++c) formGrid->setColumnStretch(c,1);
     QPushButton *valider = new QPushButton("Enregistrer"); valider->setObjectName("btnValiderPersonnelInline"); valider->setStyleSheet("QPushButton { background:#1F4E79; color:white; border-radius:5px; padding:6px 10px; font-weight:600; }");
     QPushButton *annuler = new QPushButton("Effacer"); annuler->setObjectName("btnAnnulerPersonnelInline");
@@ -113,28 +114,6 @@ void GSmartFireStation::setupPersonnel()
 
 }
 
-// Données de démonstration (à remplacer plus tard par la base de données)
-void GSmartFireStation::chargerPersonnelExemple()
-{
-    m_personnel.clear();
-    m_personnel.append(Personnel("P001", "Ben Ali", "Ahmed", "Capitaine", "Chef de garde", "22 000 111",
-                              "ahmed.benali@firestation.tn", "pass1234", "Disponible", 1));
-    m_personnel.append(Personnel("P002", "Trabelsi", "Yassine", "Sergent", "Intervention", "22 000 222",
-                              "yassine.trabelsi@firestation.tn", "pass1234", "En mission", 3));
-    m_personnel.append(Personnel("P003", "Jlassi", "Sami", "Caporal", "Secours", "22 000 333",
-                              "sami.jlassi@firestation.tn", "pass1234", "Disponible", 0));
-    m_personnel.append(Personnel("P004", "Gharbi", "Mehdi", "Lieutenant", "Intervention", "22 000 555",
-                              "mehdi.gharbi@firestation.tn", "pass1234", "Disponible", 1));
-    m_personnel.append(Personnel("P005", "Khelifi", "Walid", "Sapeur", "Secours", "22 000 666",
-                              "walid.khelifi@firestation.tn", "pass1234", "Disponible", 2));
-    m_personnel.append(Personnel("P006", "Ben Salah", "Karim", "Adjudant", "Logistique", "22 000 777",
-                              "karim.bensalah@firestation.tn", "pass1234", "En congé", 0));
-    m_personnel.append(Personnel("P007", "Dridi", "Nour", "Sapeur", "Intervention", "22 000 888",
-                              "nour.dridi@firestation.tn", "pass1234", "En mission", 4));
-    m_personnel.append(Personnel("P014", "Mansour", "Omar", "Sergent", "Intervention", "22 000 444",
-                              "omar.mansour@firestation.tn", "pass1234", "En mission", 5));
-}
-
 // Numéro de la ligne sélectionnée dans le tableau (-1 si aucune).
 // La ligne n du tableau correspond toujours au personnel n de la liste m_personnel.
 int GSmartFireStation::personnelSelectionne()
@@ -146,17 +125,6 @@ int GSmartFireStation::personnelSelectionne()
 }
 
 // Prochain ID libre : P001, P002, ...
-QString GSmartFireStation::prochainIdPersonnel()
-{
-    int max = 0;
-    for (int i = 0; i < m_personnel.size(); i++) {
-        int numero = m_personnel[i].id().mid(1).toInt();
-        if (numero > max)
-            max = numero;
-    }
-    return QString("P%1").arg(max + 1, 3, 10, QChar('0'));
-}
-
 // ------------------------------------------------------------------ affichage
 void GSmartFireStation::refreshPersonnelTable()
 {
@@ -183,7 +151,7 @@ void GSmartFireStation::refreshPersonnelTable()
         else if (p.disponibilite() == "En mission")
             couleurDispo = QColor("#B45309");
 
-        ui->tableWidgetPersonnel->setItem(r, 0, creerItem(p.id(), noir, false));
+        ui->tableWidgetPersonnel->setItem(r, 0, creerItem(p.idTexte(), noir, false));
         ui->tableWidgetPersonnel->setItem(r, 1, creerItem(p.nom(), couleurNom, gras));
         ui->tableWidgetPersonnel->setItem(r, 2, creerItem(p.prenom(), couleurNom, gras));
         ui->tableWidgetPersonnel->setItem(r, 3, creerItem(p.grade(), noir, false));
@@ -261,7 +229,7 @@ void GSmartFireStation::refreshSurcharge()
     }
 
     Personnel p = m_personnel[plusCharge];
-    ui->labelSurchargeNom->setText(p.id() + " — " + p.nomComplet());
+    ui->labelSurchargeNom->setText(p.idTexte() + " — " + p.nomComplet());
     ui->labelSurchargeCharge->setText(QString("Charge actuelle : %1 %").arg(p.charge()));
     setLabelClass(ui->labelSurchargeCharge, "textDanger");
     QString etat = "⚠ Surcharge détectée";
@@ -277,7 +245,7 @@ void GSmartFireStation::on_btnAjouterPersonnel_clicked()
 {
     annulerPersonnelInline();
     m_personnelEditIndex = -1;
-    m_formId->setText(prochainIdPersonnel());
+    m_formId->setText(QString("(auto)"));
     m_formPersonnel->setTitle("Ajouter un personnel — remplissez la fiche ci-dessous");
     // Editor remains visible; only the field contents change.
     m_formPersonnel->show();
@@ -294,13 +262,13 @@ void GSmartFireStation::on_btnModifierPersonnel_clicked()
     }
     const Personnel p = m_personnel[i];
     m_personnelEditIndex = i;
-    m_formId->setText(p.id());
+    m_formId->setText(p.idTexte());
     m_formNom->setText(p.nom()); m_formPrenom->setText(p.prenom());
     m_formGrade->setCurrentText(p.grade()); m_formPoste->setCurrentText(p.poste());
     m_formTelephone->setText(p.telephone()); m_formEmail->setText(p.email());
     m_formMotDePasse->setText(p.motDePasse()); m_formDisponibilite->setCurrentText(p.disponibilite());
     m_formMissions->setValue(p.missionsEnCours());
-    m_formPersonnel->setTitle("Modifier " + p.id() + " — modifiez les champs puis enregistrez");
+    m_formPersonnel->setTitle("Modifier " + p.idTexte() + " — modifiez les champs puis enregistrez");
     m_formPersonnel->show();
     m_formNom->setFocus();
 }
@@ -315,29 +283,28 @@ void GSmartFireStation::enregistrerPersonnelInline()
     else if (m_formPrenom->text().trimmed().isEmpty()) erreur = "Le prénom est obligatoire.";
     else if (tel.length() != 8 || !telOk) erreur = "Le téléphone doit contenir exactement 8 chiffres.";
     else if (!email.contains("@") || !email.contains(".")) erreur = "L'adresse email n'est pas valide.";
-    else if (m_formMotDePasse->text().length() < 4) erreur = "Le mot de passe doit contenir au moins 4 caractères.";
     if (!erreur.isEmpty()) { QMessageBox::warning(this, "Saisie incorrecte", erreur); return; }
-    Personnel p(m_formId->text(), m_formNom->text().trimmed(), m_formPrenom->text().trimmed(),
+    // Le modèle (classe Personnel) exécute les requêtes : aucune requête ici.
+    int id = (m_personnelEditIndex >= 0) ? m_personnel[m_personnelEditIndex].id() : 0;
+    Personnel p(id, m_formNom->text().trimmed(), m_formPrenom->text().trimmed(),
                 m_formGrade->currentText(), m_formPoste->currentText(), m_formTelephone->text().trimmed(),
                 email, m_formMotDePasse->text(), m_formDisponibilite->currentText(), m_formMissions->value());
-    if (m_personnelEditIndex >= 0 && m_personnelEditIndex < m_personnel.size()) {
-        m_personnel[m_personnelEditIndex] = p;
-        statusBar()->showMessage("Personnel modifié avec succès.", 4000);
-    } else {
-        m_personnel.append(p);
-        m_personnelEditIndex = m_personnel.size() - 1;
-        statusBar()->showMessage("Personnel ajouté avec succès.", 4000);
+    bool modification = (m_personnelEditIndex >= 0);
+    bool ok = modification ? p.modifier() : p.ajouter();
+    if (!ok) {
+        QMessageBox::critical(this, "Base de données", "L'opération a échoué.");
+        return;
     }
+    statusBar()->showMessage(modification ? "Personnel modifié avec succès." : "Personnel ajouté avec succès.", 4000);
+    m_personnel = Personnel::lireTous();
     refreshPersonnelTable();
-    ui->tableWidgetPersonnel->selectRow(m_personnelEditIndex);
-    m_formPersonnel->setTitle("Fiche du personnel — remplissez les champs puis validez");
-    m_formPersonnel->show();
+    annulerPersonnelInline();
 }
 
 void GSmartFireStation::annulerPersonnelInline()
 {
     m_personnelEditIndex = -1;
-    m_formId->setText(prochainIdPersonnel());
+    m_formId->setText(QString("(auto)"));
     m_formNom->clear(); m_formPrenom->clear(); m_formTelephone->clear();
     m_formEmail->clear(); m_formMotDePasse->clear(); m_formMissions->setValue(0);
     m_formGrade->setCurrentIndex(0); m_formPoste->setCurrentIndex(0); m_formDisponibilite->setCurrentText("Disponible");
@@ -358,7 +325,11 @@ void GSmartFireStation::on_btnSupprimerPersonnel_clicked()
     if (reponse != QMessageBox::Yes)
         return;
 
-    m_personnel.removeAt(i);
+    if (!Personnel::supprimer(m_personnel[i].id())) {
+        QMessageBox::critical(this, "Base de données", "La suppression a échoué.");
+        return;
+    }
+    m_personnel = Personnel::lireTous();
     ui->tableWidgetPersonnel->setCurrentCell(-1, -1);
     refreshPersonnelTable();
     statusBar()->showMessage("Personnel supprimé.", 5000);
@@ -378,7 +349,7 @@ void GSmartFireStation::filtrerPersonnel()
     for (int r = 0; r < m_personnel.size(); r++) {
         Personnel p = m_personnel[r];
         bool trouve = texte == ""
-                      || p.id().contains(texte, Qt::CaseInsensitive)
+                      || p.idTexte().contains(texte, Qt::CaseInsensitive)
                       || p.nom().contains(texte, Qt::CaseInsensitive)
                       || p.prenom().contains(texte, Qt::CaseInsensitive)
                       || p.grade().contains(texte, Qt::CaseInsensitive);
@@ -481,7 +452,7 @@ void GSmartFireStation::on_btnDetailsSurcharge_clicked()
         if (p.charge() >= seuil) {
             nb++;
             texte += QString("• %1 — %2 (%3) : %4 mission(s), charge %5 %\n")
-                         .arg(p.id()).arg(p.nomComplet()).arg(p.grade())
+                         .arg(p.idTexte()).arg(p.nomComplet()).arg(p.grade())
                          .arg(p.missionsEnCours()).arg(p.charge());
             if (plusCharge < 0 || p.charge() > m_personnel[plusCharge].charge())
                 plusCharge = i;

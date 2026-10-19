@@ -51,7 +51,7 @@ GSmartFireStation::GSmartFireStation(QWidget *parent)
     ui->frameSurcharge->hide();
     setupPersonnel();
     setupVehicules();
-    chargerPersonnelExemple();
+    m_personnel = Personnel::lireTous();   // lecture depuis Oracle
     chargerVehiculesExemple();
     refreshPersonnelTable();
     refreshVehiculesTable();
@@ -199,7 +199,7 @@ void GSmartFireStation::refreshDashboard()
     for (int i = 0; i < m_personnel.size(); i++) {
         if (m_personnel[i].charge() >= seuil) {
             ajouterAlerte(QString("Personnel %1 : charge opérationnelle élevée (%2 %)")
-                              .arg(m_personnel[i].id()).arg(m_personnel[i].charge()), "#C00000");
+                              .arg(m_personnel[i].idTexte()).arg(m_personnel[i].charge()), "#C00000");
             nbAlertes++;
         }
     }
