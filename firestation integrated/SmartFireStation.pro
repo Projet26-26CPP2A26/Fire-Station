@@ -7,12 +7,10 @@ TEMPLATE  = app
 
 SOURCES += \
     main.cpp \
-    gsmartfirestation.cpp \
-    personnel.cpp
+    gsmartfirestation.cpp
 
 HEADERS += \
-    gsmartfirestation.h \
-    personnel.h
+    gsmartfirestation.h
 
 FORMS += gsmartfirestation.ui
 
